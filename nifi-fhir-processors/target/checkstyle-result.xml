@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="8.29">
+<file name="/Users/aviva/nifi/hapifhir/nifi-fhir-processors/src/main/java/org/apache/nifi/processors/fhir/MyProcessor.java">
+<error line="48" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - java.lang.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+<error line="53" severity="warning" message="Using the &apos;.*&apos; form of import should be avoided - org.hl7.fhir.r4.model.*." source="com.puppycrawl.tools.checkstyle.checks.imports.AvoidStarImportCheck"/>
+</file>
+<file name="/Users/aviva/nifi/hapifhir/nifi-fhir-processors/src/test/java/org/apache/nifi/processors/fhir/MyProcessorTest.java">
+</file>
+</checkstyle>
