@@ -264,7 +264,7 @@ public class MyProcessorTest {
         result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
         result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
         System.out.println(result);
-//        result.assertContentEquals(patient_ex_summary);
+        result.assertContentEquals(patient_ex_summary);
 
     }
 }
