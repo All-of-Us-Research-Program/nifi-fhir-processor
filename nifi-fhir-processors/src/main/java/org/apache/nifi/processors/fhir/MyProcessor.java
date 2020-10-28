@@ -34,9 +34,11 @@ import org.apache.nifi.processor.ProcessorInitializationContext;
 import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.processor.io.InputStreamCallback;
+import org.apache.nifi.processor.io.OutputStreamCallback;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -113,6 +115,15 @@ public class MyProcessor extends AbstractProcessor {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor SET_STANDARD_VALIDATE = new PropertyDescriptor
+            .Builder().name("SET_STANDARD_VALIDATE")
+            .displayName("Standard Schema Validation")
+            .description("Should the validator validate the resource against the base schema.")
+            .defaultValue("false")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final Relationship SUCCESS = new Relationship.Builder()
             .name("SUCCESS")
             .description("success")
@@ -136,6 +147,7 @@ public class MyProcessor extends AbstractProcessor {
         descriptors.add(SET_STRIP_VERSIONS);
         descriptors.add(SET_OMIT_ID);
         descriptors.add(SET_SERVER_URL);
+        descriptors.add(SET_STANDARD_VALIDATE);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -171,6 +183,7 @@ public class MyProcessor extends AbstractProcessor {
       boolean isSuppressNarratives = Boolean.parseBoolean(context.getProperty(SET_SUPPRESS_NARRATIVES).getValue());
       boolean isStripVersions = Boolean.parseBoolean(context.getProperty(SET_STRIP_VERSIONS).getValue());
       boolean isOmitId = Boolean.parseBoolean(context.getProperty(SET_OMIT_ID).getValue());
+      boolean isStandardValidate = Boolean.parseBoolean(context.getProperty(SET_STANDARD_VALIDATE).getValue());
       String serverBaseURL = context.getProperty(SET_SERVER_URL).getValue();
 
       String relationship = "y";
@@ -195,8 +208,9 @@ public class MyProcessor extends AbstractProcessor {
         // make FHIR context, validator, and parser
         FhirContext ctx = FhirContext.forR4();
         FhirValidator validator = ctx.newValidator();
-        IParser parser = ctx.newJsonParser();
+        validator.setValidateAgainstStandardSchema(isStandardValidate);
 
+        IParser parser = ctx.newJsonParser();
         parser.setPrettyPrint(isPrettyPrint);
         parser.setSummaryMode(isSummaryMode);
         parser.setSuppressNarratives(isSuppressNarratives);
@@ -212,9 +226,17 @@ public class MyProcessor extends AbstractProcessor {
           relationship="f";
         }
 
+        flowFile = session.write(flowFile, new OutputStreamCallback() {
+          @Override
+          public void process(OutputStream out) throws IOException {
+            out.write(parser.encodeResourceToString(resource).getBytes());
+          }
+        });
+
         // add FF attributes
         flowFile = session.putAttribute(flowFile, "resourceType", resource.fhirType());
         flowFile = session.putAttribute(flowFile, "valid", Boolean.toString(valid));
+
       } catch(Exception e) {
         relationship="f";
         getLogger().error(e.toString());
