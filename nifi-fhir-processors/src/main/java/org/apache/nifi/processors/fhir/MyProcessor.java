@@ -60,10 +60,55 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 @WritesAttributes({@WritesAttribute(attribute="", description="")})
 public class MyProcessor extends AbstractProcessor {
 
-    public static final PropertyDescriptor MY_PROPERTY = new PropertyDescriptor
-            .Builder().name("MY_PROPERTY")
-            .displayName("My property")
-            .description("Example Property")
+    public static final PropertyDescriptor SET_PRETTY_PRINT = new PropertyDescriptor
+            .Builder().name("SET_PRETTY_PRINT")
+            .displayName("Set Pretty Print")
+            .description("Parser will encode resources with human-readable spacing and newlines between elements.")
+            .defaultValue("false")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor SET_SUMMARY_MODE = new PropertyDescriptor
+            .Builder().name("SET_SUMMARY_MODE")
+            .displayName("Summary Mode")
+            .description("Only elements marked by the FHIR specification as being summary elements will be included.")
+            .defaultValue("false")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor SET_SUPPRESS_NARRATIVES = new PropertyDescriptor
+            .Builder().name("SET_SUPPRESS_NARRATIVES")
+            .displayName("Suppress Narratives")
+            .description("Narratives will not be included in the encoded values.")
+            .defaultValue("false")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor SET_STRIP_VERSIONS = new PropertyDescriptor
+            .Builder().name("SET_STRIP_VERSIONS")
+            .displayName("Strip Versions from References")
+            .description("Resource references containing a version will have the version removed when the resource is encoded.")
+            .defaultValue("true")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor SET_OMIT_ID = new PropertyDescriptor
+            .Builder().name("SET_OMIT_ID")
+            .displayName("Omit Resource ID")
+            .description("The ID of any resources being encoded will not be included in the output.")
+            .defaultValue("false")
+            .required(false)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
+    public static final PropertyDescriptor SET_SERVER_URL = new PropertyDescriptor
+            .Builder().name("SET_SERVER_URL")
+            .displayName("Server Base URL")
+            .description("Set the server's base URL used by the parser.")
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -85,7 +130,12 @@ public class MyProcessor extends AbstractProcessor {
     @Override
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
-        descriptors.add(MY_PROPERTY);
+        descriptors.add(SET_PRETTY_PRINT);
+        descriptors.add(SET_SUMMARY_MODE);
+        descriptors.add(SET_SUPPRESS_NARRATIVES);
+        descriptors.add(SET_STRIP_VERSIONS);
+        descriptors.add(SET_OMIT_ID);
+        descriptors.add(SET_SERVER_URL);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -116,6 +166,13 @@ public class MyProcessor extends AbstractProcessor {
         return;
       }
 
+      boolean isPrettyPrint = Boolean.parseBoolean(context.getProperty(SET_PRETTY_PRINT).getValue());
+      boolean isSummaryMode = Boolean.parseBoolean(context.getProperty(SET_SUMMARY_MODE).getValue());
+      boolean isSuppressNarratives = Boolean.parseBoolean(context.getProperty(SET_SUPPRESS_NARRATIVES).getValue());
+      boolean isStripVersions = Boolean.parseBoolean(context.getProperty(SET_STRIP_VERSIONS).getValue());
+      boolean isOmitId = Boolean.parseBoolean(context.getProperty(SET_OMIT_ID).getValue());
+      String serverBaseURL = context.getProperty(SET_SERVER_URL).getValue();
+
       String relationship = "y";
       final AtomicReference<String> str = new AtomicReference<>();
 
@@ -140,6 +197,13 @@ public class MyProcessor extends AbstractProcessor {
         FhirValidator validator = ctx.newValidator();
         IParser parser = ctx.newJsonParser();
 
+        parser.setPrettyPrint(isPrettyPrint);
+        parser.setSummaryMode(isSummaryMode);
+        parser.setSuppressNarratives(isSuppressNarratives);
+        parser.setStripVersionsFromReferences(isStripVersions);
+        parser.setOmitResourceId(isOmitId);
+        if(serverBaseURL!=null) { parser.setServerBaseUrl(serverBaseURL); }
+
         // validate resource
         IBaseResource resource = parser.parseResource(input);
         Boolean valid = validator.validateWithResult(resource).isSuccessful();
@@ -149,7 +213,6 @@ public class MyProcessor extends AbstractProcessor {
         }
 
         // add FF attributes
-        // in PutFile processor, directory can be ./${resourceType} to route by resource type
         flowFile = session.putAttribute(flowFile, "resourceType", resource.fhirType());
         flowFile = session.putAttribute(flowFile, "valid", Boolean.toString(valid));
       } catch(Exception e) {
