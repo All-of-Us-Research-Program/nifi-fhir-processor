@@ -1,8 +1,10 @@
 /nifi-fhir-nar/*
 !/nifi-fhir-nar/target/nifi-fhir-nar-1.0-SNAPSHOT.nar
+!/nifi-fhir-nar/pom.xml
 
 /target
 
 /nifi-fhir-processors/*
 !/nifi-fhir-processors/src/main/java/org/apache/nifi/processors/fhir/*
 !/nifi-fhir-processors/src/test/java/org/apache/nifi/processors/fhir/*
+!/nifi-fhir-processors/pom.xml
