@@ -144,4 +144,41 @@ public class MyProcessorTest {
         result.assertContentEquals(patient_ex_summary);
 
     }
+
+
+    @Test
+    public void testPrettyPrint() throws IOException {
+        // Get content from mock input stream
+
+        InputStream content = new ByteArrayInputStream(patient_ex.getBytes());
+
+        // Add properties
+        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "true");
+        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "false");
+        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "false");
+        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
+        runner.setProperty(MyProcessor.SET_OMIT_ID, "false");
+        runner.setProperty(MyProcessor.SET_SERVER_URL, "false");
+
+        // Add the content to the runner
+        runner.enqueue(content);
+
+        // Run the enqueued content, it also takes an int = number of contents queued
+        runner.run(1);
+
+        // All results were processed with out failure
+        runner.assertQueueEmpty();
+
+        // If you need to read or do additional tests on results you can access the content
+        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
+        assertTrue("1 match", results.size() == 1);
+        MockFlowFile result = results.get(0);
+
+        // Test attributes and content
+        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
+        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
+        System.out.println(result);
+//        result.assertContentEquals(patient_ex);
+
+    }
 }

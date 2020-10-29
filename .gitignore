@@ -6,5 +6,6 @@
 
 /nifi-fhir-processors/*
 !/nifi-fhir-processors/src/main/java/org/apache/nifi/processors/fhir/*
+!/nifi-fhir-processors/src/main/java/resources/*
 !/nifi-fhir-processors/src/test/java/org/apache/nifi/processors/fhir/*
 !/nifi-fhir-processors/pom.xml
