@@ -1,12 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.apache.nifi.processors.fhir.MyProcessorTest
 -------------------------------------------------------------------------------
-Tests run: 2, Failures: 0, Errors: 2, Skipped: 0, Time elapsed: 0.424 s <<< FAILURE! - in org.apache.nifi.processors.fhir.MyProcessorTest
-testSummaryMode(org.apache.nifi.processors.fhir.MyProcessorTest)  Time elapsed: 0.31 s  <<< ERROR!
-java.nio.file.NoSuchFileException: patient-example-f201-roel
-	at org.apache.nifi.processors.fhir.MyProcessorTest.init(MyProcessorTest.java:53)
-
-testValidPatientResource(org.apache.nifi.processors.fhir.MyProcessorTest)  Time elapsed: 0.001 s  <<< ERROR!
-java.nio.file.NoSuchFileException: patient-example-f201-roel
-	at org.apache.nifi.processors.fhir.MyProcessorTest.init(MyProcessorTest.java:53)
-
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.858 s - in org.apache.nifi.processors.fhir.MyProcessorTest
