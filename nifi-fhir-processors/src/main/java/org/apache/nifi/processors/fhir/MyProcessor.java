@@ -62,9 +62,6 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 @WritesAttributes({@WritesAttribute(attribute="", description="")})
 public class MyProcessor extends AbstractProcessor {
 
-    public static final String RESOURCE_TYPE_ATTR = "resourceType";
-    public static final String VALID_ATTR = "valid";
-
     public static final PropertyDescriptor SET_PRETTY_PRINT = new PropertyDescriptor
             .Builder().name("SET_PRETTY_PRINT")
             .displayName("Set Pretty Print")
@@ -127,6 +124,15 @@ public class MyProcessor extends AbstractProcessor {
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
 
+    public static final PropertyDescriptor PARSER_TYPE = new PropertyDescriptor
+            .Builder().name("PARSER_TYPE")
+            .displayName("Parser encoding")
+            .description("Specify encoding for parser to produce.")
+            .defaultValue("JSON")
+            .required(true)
+            .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
+            .build();
+
     public static final Relationship SUCCESS = new Relationship.Builder()
             .name("SUCCESS")
             .description("success")
@@ -141,6 +147,9 @@ public class MyProcessor extends AbstractProcessor {
 
     private Set<Relationship> relationships;
 
+    public static final String RESOURCE_TYPE_ATTR = "resourceType";
+    public static final String VALID_ATTR = "valid";
+
     @Override
     protected void init(final ProcessorInitializationContext context) {
         final List<PropertyDescriptor> descriptors = new ArrayList<PropertyDescriptor>();
@@ -151,6 +160,7 @@ public class MyProcessor extends AbstractProcessor {
         descriptors.add(SET_OMIT_ID);
         descriptors.add(SET_SERVER_URL);
         descriptors.add(SET_STANDARD_VALIDATE);
+        descriptors.add(PARSER_TYPE);
         this.descriptors = Collections.unmodifiableList(descriptors);
 
         final Set<Relationship> relationships = new HashSet<Relationship>();
@@ -169,8 +179,26 @@ public class MyProcessor extends AbstractProcessor {
         return descriptors;
     }
 
+    public boolean isPrettyPrint;
+    public boolean isSummaryMode;
+    public boolean isSuppressNarratives;
+    public boolean isStripVersions;
+    public boolean isOmitId;
+    public boolean isStandardValidate;
+    public String serverBaseURL;
+    public String parserType;
+
     @OnScheduled
     public void onScheduled(final ProcessContext context) {
+
+      isPrettyPrint = Boolean.parseBoolean(context.getProperty(SET_PRETTY_PRINT).getValue());
+      isSummaryMode = Boolean.parseBoolean(context.getProperty(SET_SUMMARY_MODE).getValue());
+      isSuppressNarratives = Boolean.parseBoolean(context.getProperty(SET_SUPPRESS_NARRATIVES).getValue());
+      isStripVersions = Boolean.parseBoolean(context.getProperty(SET_STRIP_VERSIONS).getValue());
+      isOmitId = Boolean.parseBoolean(context.getProperty(SET_OMIT_ID).getValue());
+      isStandardValidate = Boolean.parseBoolean(context.getProperty(SET_STANDARD_VALIDATE).getValue());
+      serverBaseURL = context.getProperty(SET_SERVER_URL).getValue();
+      parserType = context.getProperty(PARSER_TYPE).getValue();
 
     }
 
@@ -180,14 +208,6 @@ public class MyProcessor extends AbstractProcessor {
         if ( flowFile == null ) {
             return;
         }
-
-        boolean isPrettyPrint = Boolean.parseBoolean(context.getProperty(SET_PRETTY_PRINT).getValue());
-        boolean isSummaryMode = Boolean.parseBoolean(context.getProperty(SET_SUMMARY_MODE).getValue());
-        boolean isSuppressNarratives = Boolean.parseBoolean(context.getProperty(SET_SUPPRESS_NARRATIVES).getValue());
-        boolean isStripVersions = Boolean.parseBoolean(context.getProperty(SET_STRIP_VERSIONS).getValue());
-        boolean isOmitId = Boolean.parseBoolean(context.getProperty(SET_OMIT_ID).getValue());
-        boolean isStandardValidate = Boolean.parseBoolean(context.getProperty(SET_STANDARD_VALIDATE).getValue());
-        String serverBaseURL = context.getProperty(SET_SERVER_URL).getValue();
 
         String relationship = "y";
         final AtomicReference<String> str = new AtomicReference<>();
@@ -201,7 +221,7 @@ public class MyProcessor extends AbstractProcessor {
                     String result = s.hasNext() ? s.next() : "";
                     str.set(result);
                 } catch(Exception ex) {
-                    getLogger().error("Failed to read json string.");
+                    getLogger().error("Failed to read string.");
                 }
             }
         });
@@ -213,13 +233,21 @@ public class MyProcessor extends AbstractProcessor {
             FhirValidator validator = ctx.newValidator();
             validator.setValidateAgainstStandardSchema(isStandardValidate);
 
-            IParser parser = ctx.newJsonParser();
+            IParser parser;
+            if(parserType == "XML") {
+              parser = ctx.newXmlParser();
+            } else {
+              parser = ctx.newJsonParser();
+            }
+
             parser.setPrettyPrint(isPrettyPrint);
             parser.setSummaryMode(isSummaryMode);
             parser.setSuppressNarratives(isSuppressNarratives);
             parser.setStripVersionsFromReferences(isStripVersions);
             parser.setOmitResourceId(isOmitId);
-            if(serverBaseURL!=null) { parser.setServerBaseUrl(serverBaseURL); }
+            if(serverBaseURL!=null) {
+              parser.setServerBaseUrl(serverBaseURL);
+            }
 
             // validate resource
             IBaseResource resource = parser.parseResource(input);
@@ -237,8 +265,8 @@ public class MyProcessor extends AbstractProcessor {
             });
 
             // add FF attributes
-            flowFile = session.putAttribute(flowFile, "resourceType", resource.fhirType());
-            flowFile = session.putAttribute(flowFile, "valid", Boolean.toString(valid));
+            flowFile = session.putAttribute(flowFile, RESOURCE_TYPE_ATTR, resource.fhirType());
+            flowFile = session.putAttribute(flowFile, VALID_ATTR, Boolean.toString(valid));
 
         } catch(Exception e) {
             relationship="f";
