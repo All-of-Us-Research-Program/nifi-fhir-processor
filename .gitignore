@@ -1,9 +1,19 @@
+<<<<<<< HEAD
 #/nifi-fhir-nar/*
 #!/nifi-fhir-nar/target/nifi-fhir-nar-1.0-SNAPSHOT.nar
 #!/nifi-fhir-nar/pom.xml
 #
 #/target
 #
+=======
+.gitignore
+#/nifi-fhir-nar/*
+#!/nifi-fhir-nar/target/nifi-fhir-nar-1.0-SNAPSHOT.nar
+#!/nifi-fhir-nar/pom.xml
+
+#/target
+
+>>>>>>> b1c90eab7733a88ccb3a16034b0fa1fab225a542
 #/nifi-fhir-processors/*
 #!/nifi-fhir-processors/src/main/java/org/apache/nifi/processors/fhir/*
 #!/nifi-fhir-processors/src/test/java/org/apache/nifi/processors/fhir/*

@@ -1,4 +1,8 @@
 -------------------------------------------------------------------------------
 Test set: org.apache.nifi.processors.fhir.MyProcessorTest
 -------------------------------------------------------------------------------
+<<<<<<< HEAD
 Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.918 s - in org.apache.nifi.processors.fhir.MyProcessorTest
+=======
+Tests run: 2, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.972 s - in org.apache.nifi.processors.fhir.MyProcessorTest
+>>>>>>> b1c90eab7733a88ccb3a16034b0fa1fab225a542

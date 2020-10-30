@@ -1,0 +1,6 @@
+[pool-1-thread-1] INFO ca.uhn.fhir.util.VersionUtil - HAPI FHIR version 5.0.0 - Rev 813d82e5fa
+[pool-1-thread-1] INFO ca.uhn.fhir.context.FhirContext - Creating new FHIR context for FHIR version [R4]
+[pool-1-thread-1] INFO ca.uhn.fhir.validation.FhirValidator - Ph-schematron library not found on classpath, will not attempt to perform schematron validation
+[pool-1-thread-1] INFO ca.uhn.fhir.util.XmlUtil - Unable to determine StAX implementation: java.xml/META-INF/MANIFEST.MF not found
+FlowFile[0,165519551068993.mockFlowFile,931B]
+[pool-2-thread-1] INFO ca.uhn.fhir.context.FhirContext - Creating new FHIR context for FHIR version [R4]
