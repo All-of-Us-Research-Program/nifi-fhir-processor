@@ -248,7 +248,7 @@ public class MyProcessor extends AbstractProcessor {
             validator.setValidateAgainstStandardSchema(isStandardValidate);
 
             IParser parser;
-            if(parserType == "XML") {
+            if(parserType.equals("XML")) {
               parser = ctx.newXmlParser();
             } else {
               parser = ctx.newJsonParser();
