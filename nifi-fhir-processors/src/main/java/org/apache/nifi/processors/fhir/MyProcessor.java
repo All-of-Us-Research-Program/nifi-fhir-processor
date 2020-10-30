@@ -35,6 +35,7 @@ import org.apache.nifi.processor.Relationship;
 import org.apache.nifi.processor.util.StandardValidators;
 import org.apache.nifi.processor.io.InputStreamCallback;
 import org.apache.nifi.processor.io.OutputStreamCallback;
+import org.apache.nifi.components.AllowableValue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -62,11 +63,15 @@ import org.hl7.fhir.instance.model.api.IBaseResource;
 @WritesAttributes({@WritesAttribute(attribute="", description="")})
 public class MyProcessor extends AbstractProcessor {
 
+    public static AllowableValue[] tf = new AllowableValue[]{new AllowableValue("true"), new AllowableValue("false")};
+    public static AllowableValue[] encoding = new AllowableValue[]{new AllowableValue("JSON"), new AllowableValue("XML")};
+
     public static final PropertyDescriptor SET_PRETTY_PRINT = new PropertyDescriptor
             .Builder().name("SET_PRETTY_PRINT")
             .displayName("Set Pretty Print")
             .description("Parser will encode resources with human-readable spacing and newlines between elements.")
             .defaultValue("false")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -76,6 +81,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Summary Mode")
             .description("Only elements marked by the FHIR specification as being summary elements will be included.")
             .defaultValue("false")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -85,6 +91,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Suppress Narratives")
             .description("Narratives will not be included in the encoded values.")
             .defaultValue("false")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -94,6 +101,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Strip Versions from References")
             .description("Resource references containing a version will have the version removed when the resource is encoded.")
             .defaultValue("true")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -103,6 +111,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Omit Resource ID")
             .description("The ID of any resources being encoded will not be included in the output.")
             .defaultValue("false")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -120,6 +129,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Standard Schema Validation")
             .description("Should the validator validate the resource against the base schema.")
             .defaultValue("false")
+            .allowableValues(tf)
             .required(false)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -129,6 +139,7 @@ public class MyProcessor extends AbstractProcessor {
             .displayName("Parser encoding")
             .description("Specify encoding for parser to produce.")
             .defaultValue("JSON")
+            .allowableValues(encoding)
             .required(true)
             .addValidator(StandardValidators.NON_EMPTY_VALIDATOR)
             .build();
@@ -179,6 +190,8 @@ public class MyProcessor extends AbstractProcessor {
         return descriptors;
     }
 
+    public FhirContext ctx;
+
     public boolean isPrettyPrint;
     public boolean isSummaryMode;
     public boolean isSuppressNarratives;
@@ -190,6 +203,8 @@ public class MyProcessor extends AbstractProcessor {
 
     @OnScheduled
     public void onScheduled(final ProcessContext context) {
+
+      ctx = FhirContext.forR4();
 
       isPrettyPrint = Boolean.parseBoolean(context.getProperty(SET_PRETTY_PRINT).getValue());
       isSummaryMode = Boolean.parseBoolean(context.getProperty(SET_SUMMARY_MODE).getValue());
@@ -228,8 +243,7 @@ public class MyProcessor extends AbstractProcessor {
         String input = str.get();
 
         try {
-            // make FHIR context, validator, and parser
-            FhirContext ctx = FhirContext.forR4();
+            // make FHIR validator and parser
             FhirValidator validator = ctx.newValidator();
             validator.setValidateAgainstStandardSchema(isStandardValidate);
 

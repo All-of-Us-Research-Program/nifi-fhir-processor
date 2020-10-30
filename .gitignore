@@ -1,3 +1,4 @@
+.gitignore
 /nifi-fhir-nar/*
 !/nifi-fhir-nar/target/nifi-fhir-nar-1.0-SNAPSHOT.nar
 !/nifi-fhir-nar/pom.xml
