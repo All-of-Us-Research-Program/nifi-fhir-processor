@@ -56,6 +56,9 @@ public class MyProcessorTest {
     private String patient_ex_server_url;
     private String patient_ex_json;
     private String patient_ex_xml;
+    private String patient_ex_xml_parsed;
+    private String patient_ex_xml_all_true;
+    private String patient_ex_json_all_true;
 
     @Before
     public void init() throws IOException, URISyntaxException {
@@ -73,7 +76,9 @@ public class MyProcessorTest {
         File patient_ex_server_url_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-server-url.txt");
         File patient_ex_json_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-json.txt");
         File patient_ex_xml_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-xml.txt");
-
+        File patient_ex_xml_parsed_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-xml-parsed.txt");
+        File patient_ex_xml_all_true_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-xml-all-true.txt");
+        File patient_ex_json_all_true_file = new File(System.getProperty("user.dir") + "/src/test/java/org/apache/nifi/processors/fhir/patient-example-f201-roel-json-all-true.txt");
 
         Scanner s = new Scanner(patient_ex_file).useDelimiter("\\A");
         String result = s.hasNext() ? s.next() : "";
@@ -119,6 +124,17 @@ public class MyProcessorTest {
         result = s.hasNext() ? s.next() : "";
         patient_ex_xml = result;
 
+        s = new Scanner(patient_ex_xml_parsed_file).useDelimiter("\\A");
+        result = s.hasNext() ? s.next() : "";
+        patient_ex_xml_parsed = result;
+
+        s = new Scanner(patient_ex_xml_all_true_file).useDelimiter("\\A");
+        result = s.hasNext() ? s.next() : "";
+        patient_ex_xml_all_true = result;
+
+        s = new Scanner(patient_ex_json_all_true_file).useDelimiter("\\A");
+        result = s.hasNext() ? s.next() : "";
+        patient_ex_json_all_true = result;
 
     }
 
@@ -401,118 +417,112 @@ public class MyProcessorTest {
     }
 
 
-//    @Test
-//    public void testParseXML() throws IOException {
-//        // Get content from mock input stream
-//
-//        InputStream content = new ByteArrayInputStream(patient_ex.getBytes());
-//
-//        // Add properties
-//        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "false");
-//        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "false");
-//        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "false");
-//        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
-//        runner.setProperty(MyProcessor.SET_OMIT_ID, "false");
-//        runner.setProperty(MyProcessor.SET_STANDARD_VALIDATE, "false");
-//        runner.setProperty(MyProcessor.SET_SERVER_URL, "false");
-//        runner.setProperty(MyProcessor.PARSER_TYPE, "XML");
-//
-//        // Add the content to the runner
-//        runner.enqueue(content);
-//
-//        // Run the enqueued content, it also takes an int = number of contents queued
-//        runner.run(1);
-//
-//        // All results were processed with out failure
-//        runner.assertQueueEmpty();
-//
-//        // If you need to read or do additional tests on results you can access the content
-//        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
-//        assertTrue("1 match", results.size() == 1);
-//        MockFlowFile result = results.get(0);
-//
-//        // Test attributes and content
-//        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
-//        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
-//        System.out.println(result);
-////        result.assertContentEquals(patient_ex);
-//
-//    }
-//
-//
-//    @Test
-//    public void testJSONToXML() throws IOException {
-//        // Get content from mock input stream
-//
-//        InputStream content = new ByteArrayInputStream(patient_ex.getBytes());
-//
-//        // Add properties
-//        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "false");
-//        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "false");
-//        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "false");
-//        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
-//        runner.setProperty(MyProcessor.SET_OMIT_ID, "false");
-//        runner.setProperty(MyProcessor.SET_STANDARD_VALIDATE, "false");
-//        runner.setProperty(MyProcessor.SET_SERVER_URL, "false");
-//        runner.setProperty(MyProcessor.PARSER_TYPE, "XML");
-//
-//        // Add the content to the runner
-//        runner.enqueue(content);
-//
-//        // Run the enqueued content, it also takes an int = number of contents queued
-//        runner.run(1);
-//
-//        // All results were processed with out failure
-//        runner.assertQueueEmpty();
-//
-//        // If you need to read or do additional tests on results you can access the content
-//        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
-//        assertTrue("1 match", results.size() == 1);
-//        MockFlowFile result = results.get(0);
-//
-//        // Test attributes and content
-//        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
-//        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
-//        System.out.println(result);
-////        result.assertContentEquals(patient_ex);
-//
-//    }
-//
-//    @Test
-//    public void testXMLToJSON() throws IOException {
-//        // Get content from mock input stream
-//
-//        InputStream content = new ByteArrayInputStream(patient_ex.getBytes());
-//
-//        // Add properties
-//        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "false");
-//        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "false");
-//        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "false");
-//        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
-//        runner.setProperty(MyProcessor.SET_OMIT_ID, "false");
-//        runner.setProperty(MyProcessor.SET_STANDARD_VALIDATE, "false");
-//        runner.setProperty(MyProcessor.SET_SERVER_URL, "false");
-//        runner.setProperty(MyProcessor.PARSER_TYPE, "JSON");
-//
-//        // Add the content to the runner
-//        runner.enqueue(content);
-//
-//        // Run the enqueued content, it also takes an int = number of contents queued
-//        runner.run(1);
-//
-//        // All results were processed with out failure
-//        runner.assertQueueEmpty();
-//
-//        // If you need to read or do additional tests on results you can access the content
-//        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
-//        assertTrue("1 match", results.size() == 1);
-//        MockFlowFile result = results.get(0);
-//
-//        // Test attributes and content
-//        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
-//        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
-//        System.out.println(result);
-////        result.assertContentEquals(patient_ex);
-//
-//    }
+    @Test
+    public void testParseXML() throws IOException {
+        // Get content from mock input stream
+
+        InputStream content = new ByteArrayInputStream(patient_ex_xml.getBytes());
+
+        // Set parser type property to XML
+        runner.setProperty(MyProcessor.PARSER_TYPE, "XML");
+
+        // Add the content to the runner
+        runner.enqueue(content);
+
+        // Run the enqueued content, it also takes an int = number of contents queued
+        runner.run(1);
+
+        // All results were processed with out failure
+        runner.assertQueueEmpty();
+
+        // If you need to read or do additional tests on results you can access the content
+        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
+        assertTrue("1 match", results.size() == 1);
+        MockFlowFile result = results.get(0);
+
+        // Test attributes and content
+        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
+        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
+        System.out.println(result);
+        result.assertContentEquals(patient_ex_xml_parsed);
+
+    }
+
+
+    @Test
+    public void testAllPropertiesTrueXML() throws IOException {
+        // Get content from mock input stream
+
+        InputStream content = new ByteArrayInputStream(patient_ex_xml.getBytes());
+
+        // Add properties -- true
+        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "true");
+        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "true");
+        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "true");
+        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
+        runner.setProperty(MyProcessor.SET_OMIT_ID, "true");
+        runner.setProperty(MyProcessor.SET_STANDARD_VALIDATE, "true");
+        runner.setProperty(MyProcessor.SET_SERVER_URL, "http://example.com/base");
+        runner.setProperty(MyProcessor.PARSER_TYPE, "XML");
+
+        // Add the content to the runner
+        runner.enqueue(content);
+
+        // Run the enqueued content, it also takes an int = number of contents queued
+        runner.run(1);
+
+        // All results were processed with out failure
+        runner.assertQueueEmpty();
+
+        // If you need to read or do additional tests on results you can access the content
+        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
+        assertTrue("1 match", results.size() == 1);
+        MockFlowFile result = results.get(0);
+
+        // Test attributes and content
+        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
+        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
+        System.out.println(result);
+        result.assertContentEquals(patient_ex_xml_all_true);
+
+    }
+
+
+    @Test
+    public void testAllPropertiesTrueJSON() throws IOException {
+        // Get content from mock input stream
+
+        InputStream content = new ByteArrayInputStream(patient_ex.getBytes());
+
+        // Add properties -- true
+        runner.setProperty(MyProcessor.SET_PRETTY_PRINT, "true");
+        runner.setProperty(MyProcessor.SET_SUMMARY_MODE, "true");
+        runner.setProperty(MyProcessor.SET_SUPPRESS_NARRATIVES, "true");
+        runner.setProperty(MyProcessor.SET_STRIP_VERSIONS, "true");
+        runner.setProperty(MyProcessor.SET_OMIT_ID, "true");
+        runner.setProperty(MyProcessor.SET_STANDARD_VALIDATE, "true");
+        runner.setProperty(MyProcessor.SET_SERVER_URL, "http://example.com/base");
+        runner.setProperty(MyProcessor.PARSER_TYPE, "JSON");
+
+        // Add the content to the runner
+        runner.enqueue(content);
+
+        // Run the enqueued content, it also takes an int = number of contents queued
+        runner.run(1);
+
+        // All results were processed with out failure
+        runner.assertQueueEmpty();
+
+        // If you need to read or do additional tests on results you can access the content
+        List<MockFlowFile> results = runner.getFlowFilesForRelationship(MyProcessor.SUCCESS);
+        assertTrue("1 match", results.size() == 1);
+        MockFlowFile result = results.get(0);
+
+        // Test attributes and content
+        result.assertAttributeEquals(MyProcessor.RESOURCE_TYPE_ATTR, "Patient");
+        result.assertAttributeEquals(MyProcessor.VALID_ATTR, "true");
+        System.out.println(result);
+        result.assertContentEquals(patient_ex_json_all_true);
+    }
+
 }

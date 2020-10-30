@@ -234,6 +234,7 @@ public class MyProcessor extends AbstractProcessor {
                 try {
                     Scanner s = new Scanner(in).useDelimiter("\\A");
                     String result = s.hasNext() ? s.next() : "";
+
                     str.set(result);
                 } catch(Exception ex) {
                     getLogger().error("Failed to read string.");

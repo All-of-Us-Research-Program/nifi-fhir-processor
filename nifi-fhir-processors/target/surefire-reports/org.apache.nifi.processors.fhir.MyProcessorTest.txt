@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: org.apache.nifi.processors.fhir.MyProcessorTest
 -------------------------------------------------------------------------------
-Tests run: 9, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.722 s - in org.apache.nifi.processors.fhir.MyProcessorTest
+Tests run: 12, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 6.174 s - in org.apache.nifi.processors.fhir.MyProcessorTest

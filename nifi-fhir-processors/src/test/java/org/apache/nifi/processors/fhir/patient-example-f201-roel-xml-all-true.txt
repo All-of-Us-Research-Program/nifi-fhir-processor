@@ -1,0 +1,69 @@
+<Patient xmlns="http://hl7.org/fhir">
+   <meta>
+      <tag>
+         <system value="http://terminology.hl7.org/CodeSystem/v3-ObservationValue"></system>
+         <code value="SUBSETTED"></code>
+         <display value="Resource encoded in summary mode"></display>
+      </tag>
+   </meta>
+   <identifier>
+      <!--    The identifier for the person as this patient (fictive)    -->
+      <use value="official"></use>
+      <type>
+         <text value="BSN"></text>
+      </type>
+      <system value="urn:oid:2.16.840.1.113883.2.4.6.3"></system>
+      <value value="123456789"></value>
+   </identifier>
+   <!--    Demographics    -->
+   <identifier>
+      <!--    The identifier for this individual    -->
+      <use value="official"></use>
+      <type>
+         <text value="BSN"></text>
+      </type>
+      <system value="urn:oid:2.16.840.1.113883.2.4.6.3"></system>
+      <value value="123456789"></value>
+   </identifier>
+   <!--    Indicates that the patient is not part of a multiple birth     -->
+   <active value="true"></active>
+   <name>
+      <!--    The name associated with the individual (fictive)    -->
+      <use value="official"></use>
+      <text value="Roel"></text>
+      <family value="Bor"></family>
+      <given value="Roelof Olaf"></given>
+      <prefix value="Drs."></prefix>
+      <suffix value="PDEng."></suffix>
+   </name>
+   <telecom>
+      <!--    The mobile contact detail for the individual    -->
+      <system value="phone"></system>
+      <value value="+31612345678"></value>
+      <use value="mobile"></use>
+   </telecom>
+   <telecom>
+      <!--    The home contact detail for the individual    -->
+      <system value="phone"></system>
+      <value value="+31201234567"></value>
+      <use value="home"></use>
+   </telecom>
+   <gender value="male"></gender>
+   <birthDate value="1960-03-13"></birthDate>
+   <!--    The date and time of birth for the individual     -->
+   <deceasedBoolean value="false"></deceasedBoolean>
+   <!--    Indicates that the individual is not deceased    -->
+   <address>
+      <!--    Home address for the individual    -->
+      <use value="home"></use>
+      <line value="Bos en Lommerplein 280"></line>
+      <city value="Amsterdam"></city>
+      <postalCode value="1055RW"></postalCode>
+      <country value="NLD"></country>
+      <!--    ISO 3166 3 letter code    -->
+   </address>
+   <managingOrganization>
+      <reference value="Organization/f201"></reference>
+      <display value="AUMC"></display>
+   </managingOrganization>
+</Patient>
