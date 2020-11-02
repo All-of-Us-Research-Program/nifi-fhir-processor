@@ -1,8 +1,8 @@
-.gitignore
 /nifi-fhir-nar/*
 !/nifi-fhir-nar/target/nifi-fhir-nar-1.0-SNAPSHOT.nar
 
 /target
+/.idea
 
 /nifi-fhir-processors/*
 !/nifi-fhir-processors/src/main/java/org/apache/nifi/processors/fhir/*
