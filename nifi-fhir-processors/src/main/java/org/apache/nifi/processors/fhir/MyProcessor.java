@@ -56,11 +56,11 @@ import ca.uhn.fhir.validation.FhirValidator;
 import org.hl7.fhir.r4.model.*;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 
-@Tags({"fhir","hapi","custom","aviva"})
-@CapabilityDescription("FHIR processor using HAPI")
+@Tags({"fhir","hapi","validate","ehr"})
+@CapabilityDescription("Parses and validates a Fast Healthcare Interoperability Resource (FHIR) using the HAPI FHIR implementation. An attribute is added of the resource type for future routing use.")
 @SeeAlso({})
 @ReadsAttributes({@ReadsAttribute(attribute="", description="")})
-@WritesAttributes({@WritesAttribute(attribute="", description="")})
+@WritesAttributes({@WritesAttribute(attribute="resourceType", description="type of FHIR resource")})
 public class MyProcessor extends AbstractProcessor {
 
     public static AllowableValue[] tf = new AllowableValue[]{new AllowableValue("true"), new AllowableValue("false")};
